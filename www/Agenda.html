@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Required meta tags-->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- Color theme for statusbar (Android only) -->
+    <meta name="theme-color" content="#2196f3" />
+    <!-- Your app title -->
+    <title>CorpInfo</title>
+    <!-- Path to Framework7 Library Bundle CSS -->
+    <link rel="stylesheet" href="lib/framework7-bundle.min.css" />
+    <!-- CSS PERSONALIZADO PARA MENU-->
+    <link rel="stylesheet" href="css/index.css" />
+    <!--Ícones Material Design-->
+    <link rel="stylesheet" href="css/materialdesignicons.min.css" />
+    <!--Ícones Remix Icon-->
+    <link rel="stylesheet" href="css/remix-icons/remixicon.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+      body{
+        height: 100vh;
+      }
+
+      .calendar {
+        background: green;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        height: 500%;
+        width: 100%;
+        gap: 20px;
+        padding: 20px 20px;
+        position: absolute; /* Posicionamento absoluto em relação ao contêiner relativo (.top-nav) */
+      }
+
+      .calendar .month {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background-color: #f0f0f0;
+        height: 30%;
+        width: 80%;
+        padding: 10px;
+        border-radius: 8px;
+      }
+
+      .calendar .month .icons {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%; /* Garantir que os ícones ocupem toda a largura disponível */
+        padding: 0 15px; /* Adicionar um padding para afastar os ícones das bordas */
+      }
+      
+      .calendar .month .icons i {
+        margin: 0 10px; /* Adicionar margem entre os ícones */
+        cursor: pointer;
+      }
+
+      .top-nave {
+        width: 100%;
+        height: 90px;
+        background: var();
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .calendar .month:hover {
+        background-color: #e0e0e0;
+      }
+
+      .month .icons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .none {
+        display: none;
+      }
+
+      .show {
+        display: block;
+      }
+
+      .agenda{
+        width: 100%;
+        height: 100%;
+      }
+
+      .wrapper{
+        width: 95%;
+        margin: 10px auto;
+        padding: 20px;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .days-week{
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        padding: 10px 0;
+        border-bottom: 1px solid black;
+      }
+
+      .days-week span{
+        color: black;
+        display: inline-block;
+        width: 14.2%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .number-days{
+        display: flex;
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      .number-days span {
+        color: white;
+        display: inline-flex; /* Altere de inline-block para inline-flex */
+        align-items: center; /* Alinhar verticalmente */
+        justify-content: center; /* Alinhar horizontalmente */
+        width: 14.2%;
+        height: 30px; /* Adicione altura para box */
+        margin: 8px 0;
+        background-color: gray; /* Adicione cor de fundo para o box */
+        border-radius: 5px; /* Adicione bordas arredondadas */
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-items: center;
+        
+      }
+
+      .number-days span:hover{
+        color: black;
+      }
+
+      .mes-anterior{
+        opacity: 0.5;
+      }
+
+      .mes-ant{
+        opacity: 0.5;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .number-days span a{
+        width: 200px;
+      }
+      
+
+    </style>
+  </head>
+
+  <body>
+    <!-- App root element -->
+    <div id="app">
+      <!-- Your main view, should have "view-main" class -->
+      <div class="view view-main">
+        <!-- TAB BAR-->
+        <div class="toolbar toolbar-bottom">
+          <div class="toolbar-inner display-flex">
+            <a href="/index/" class="tab-link link active">
+              <i class="ri-home-5-line"></i>
+              <span>Início</span>
+            </a>
+            <a href="/link2/" class="tab-link link">
+              <i class="ri-chat-1-line"></i>
+              <span>Chat</span>
+            </a>
+            <a href="/link3/" class="tab-link link">
+              <i class="ri-user-line"></i>
+              <span>Perfil</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Initial Page, "data-name" contains page name -->
+        <div data-name="Agenda" class="page color-theme-blue">
+          <!-- Scrollable page content -->
+          
+          <div class="page-content">
+            <div class="top-nave">
+              <h1 class="tittle-logo">Adicionar Agenda</h1>
+            </div>
+            <div class="calendar">
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Janeiro
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+                    <div class="number-days">
+                      <span><a href="/add/">1</a><input type="text"></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                  
+                    
+
+                  </div>
+                </div>
+                
+              </div>
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Fevereiro
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+
+                    <div class="number-days">
+                      <span><a href="/add/">1</a></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                    
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Março
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+
+                    <div class="number-days">
+                      <span><a href="/add/">1</a></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                    
+                    
+                  
+                    
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Abril
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+
+                    <div class="number-days">
+                      <span><a href="/add/">1</a></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                    
+                    
+                  
+                    
+                    
+                  </div>
+                </div>
+              </div>
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Maio
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fa fa-angle-down"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+
+                    <div class="number-days">
+                      <span><a href="/add/">1</a></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                    
+                    
+                  
+                    
+                    
+                  </div>
+                </div>
+
+              </div>
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Junho
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                  
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+
+                    <div class="number-days">
+                      <span><a href="/add/">1</a></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                                        
+                  
+                    
+                    
+                  </div>
+                </div>
+
+              </div>
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Julho
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                  
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+
+                    <div class="number-days">
+                      <span><a href="/add/">1</a></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                    
+                    
+                  
+                    
+                    
+                  </div>
+                </div>
+
+              </div>
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Agosto
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                  
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+
+                    <div class="number-days">
+                      <span><a href="/add/">1</a></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                    
+                    
+                  
+                    
+                    
+                  </div>
+                </div>
+
+              </div>
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Setembro
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                  
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+
+                    <div class="number-days">
+                      <span><a href="/add/">1</a></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                    
+                    
+                  
+                    
+                    
+                  </div>
+                </div>
+
+              </div>
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Outubro
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+
+                    <div class="number-days">
+                      <span><a href="/add/">1</a></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                    
+                    
+                  
+                    
+                    
+                  </div>
+                </div>
+
+              </div>
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Novembro
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+
+                    <div class="number-days">
+                      <span><a href="/add/">1</a></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                    
+                    
+                  
+                    
+                    
+                  </div>
+                </div>
+
+              </div>
+              <div class="month">
+                <div class="icons">
+                  <i class="fa-solid fa-bars"></i>
+                  Dezembro
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <i class="fas fa-ellipsis-v"></i>
+                  <i class="fa fa-angle-down" onclick="toggleAgenda(this)"></i>
+                </div>
+
+                <div class="agenda">
+                  <div class="wrapper">
+                    <div class="days-week">
+                      <span>S</span>
+                      <span>T</span>
+                      <span>Q</span>
+                      <span>Q</span>
+                      <span>S</span>
+                      <span>S</span>
+                      <span>S</span>
+                    </div>
+
+                    <div class="number-days">
+                      <span><a href="/add/">1</a></span>
+                      <span><a href="/add/">2</a></span>
+                      <span><a href="/add/">3</a></span>
+                      <span><a href="/add/">4</a></span>
+                      <span><a href="/add/">5</a></span>
+                      <span><a href="/add/">6</a></span>
+                      <span><a href="/add/">7</a></span>
+                      <span><a href="/add/">8</a></span>
+                      <span><a href="/add/">9</a></span>
+                      <span><a href="/add/">10</a></span>
+                      <span><a href="/add/">11</a></span>
+                      <span><a href="/add/">12</a></span>
+                      <span><a href="/add/">13</a></span>
+                      <span><a href="/add/">14</a></span>
+                      <span><a href="/add/">15</a></span>
+                      <span><a href="/add/">16</a></span>
+                      <span><a href="/add/">17</a></span>
+                      <span><a href="/add/">18</a></span>
+                      <span><a href="/add/">19</a></span>
+                      <span><a href="/add/">20</a></span>
+                      <span><a href="/add/">21</a></span>
+                      <span><a href="/add/">22</a></span>
+                      <span><a href="/add/">23</a></span>
+                      <span><a href="/add/">24</a></span>
+                      <span><a href="/add/">25</a></span>
+                      <span><a href="/add/">26</a></span>
+                      <span><a href="/add/">27</a></span>
+                      <span><a href="/add/">28</a></span>
+                      <span><a href="/add/">29</a></span>
+                      <span><a href="/add/">30</a></span>
+                      <span><a href="/add/">31</a></span>
+                  </div>
+                    
+                    
+                  
+                    
+                    
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Path to Framework7 Library Bundle JS-->
+    <script type="text/javascript" src="lib/framework7-bundle.min.js"></script>
+    <!-- jQuery -->
+    <script type="text/javascript" src="lib/jquery-3.7.0.min.js"></script>
+    <!-- Roteamento do app-->
+    <script type="text/javascript" src="js/routes.js"></script>
+    <script src="js/index.js"></script>
+  </body>
+</html>
